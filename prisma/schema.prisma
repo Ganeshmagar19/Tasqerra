@@ -12,3 +12,138 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum AuthProvider {
+  GOOGLE
+  GITHUB
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String?
+  email         String   @unique
+  username      String?  @unique
+  avatarUrl     String?
+
+  provider      AuthProvider
+  providerId    String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  boards        Board[]        @relation("BoardOwner")
+  boardMembers  BoardMember[]
+  cardsAssigned Card[]         @relation("AssignedCards")
+  createdCards  Card[]         @relation("CreatedCards") 
+  comments      Comment[]
+  notifications Notification[]
+
+  @@unique([provider, providerId])
+}
+
+
+
+model Board {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+
+  ownerId     String
+  owner       User     @relation("BoardOwner", fields: [ownerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members     BoardMember[]
+  lists       List[]
+  notifications Notification[]
+}
+
+model BoardMember {
+  id        String   @id @default(uuid())
+
+  userId    String
+  boardId   String
+  role      BoardRole
+
+  user      User     @relation(fields: [userId], references: [id])
+  board     Board    @relation(fields: [boardId], references: [id])
+
+  joinedAt  DateTime @default(now())
+
+  @@unique([userId, boardId])
+}
+
+enum BoardRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model List {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+
+  boardId   String
+  board     Board    @relation(fields: [boardId], references: [id])
+
+  cards     Card[]
+}
+
+model Card {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  position     Int
+
+  listId       String
+  list         List     @relation(fields: [listId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?    @relation("AssignedCards", fields: [assignedToId], references: [id])
+
+  createdById  String
+    createdBy    User     @relation("CreatedCards", fields: [createdById], references: [id])
+
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  comments     Comment[]
+}
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id])
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+
+  type      NotificationType
+  isRead    Boolean  @default(false)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  boardId   String?
+  board     Board?   @relation(fields: [boardId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  MENTION
+  ASSIGNED
+  CARD_MOVED
+}
