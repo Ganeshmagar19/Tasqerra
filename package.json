@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Ganeshmagar19/Tasqerra#readme",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.4.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.3.0",
     "cors": "^2.8.6",
