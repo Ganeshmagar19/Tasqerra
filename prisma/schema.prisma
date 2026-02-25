@@ -24,6 +24,7 @@ model User {
   email         String   @unique
   username      String?  @unique
   avatarUrl     String?
+  password      String?  
 
   provider      AuthProvider
   providerId    String
