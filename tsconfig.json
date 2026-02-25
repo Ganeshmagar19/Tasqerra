@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "target": "ES2023",
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": ".",
+    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "ignoreDeprecations": "6.0"
-  }
+    "skipLibCheck": true
+  },
+  "include": ["src", "prisma"]
 }
 // {
 //   "compilerOptions": {
