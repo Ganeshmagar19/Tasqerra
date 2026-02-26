@@ -26,15 +26,16 @@ export const OAuthController = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return successResponse(res, "Google login successful", {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        },
-      });
-    //   return res.redirect("http://localhost:3002/dashboard")
+      // return successResponse(res, "Google login successful", {
+      //   token,
+      //   user: {
+      //     id: user.id,
+      //     email: user.email,
+      //     name: user.name,
+      //   },
+      // });
+      return res.redirect("http://localhost:3000/dashboard?name=" + encodeURIComponent(user.name) 
+      + "&email=" + encodeURIComponent(user.email) + "&token=" + encodeURIComponent(token));
     } catch (error) {
       console.error(error);
       return errorResponse(res, "OAuth failed");
