@@ -39,6 +39,7 @@ model User {
   createdCards  Card[]         @relation("CreatedCards") 
   comments      Comment[]
   notifications Notification[]
+  attachments   Attachment[]
 
   @@unique([provider, providerId])
 }
@@ -114,6 +115,7 @@ model Card {
   updatedAt    DateTime @updatedAt
 
   comments     Comment[]
+  attachments  Attachment[]
 }
 model Comment {
   id        String   @id @default(uuid())
@@ -147,4 +149,19 @@ enum NotificationType {
   MENTION
   ASSIGNED
   CARD_MOVED
+}
+model Attachment {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileUrl   String
+  fileType  String?
+  fileSize  Int?
+
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User   @relation(fields: [uploadedById], references: [id])
+
+  createdAt DateTime @default(now())
 }
